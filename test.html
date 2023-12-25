@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テスト</title>
+    <style>
+        /* body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        pre {
+            white-space: pre-wrap;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        } */
+    </style>
+</head>
+<body>
+    <input type="file" id="fileInput" accept=".json">
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const jsonData = JSON.parse(e.target.result);
+                    const if_config = jsonData.if_config;
+                    console.log(if_config);
+                    // processSc(if_config.sc);
+                    // processLt(if_config.Lt);
+                    processOthr(if_config.othr);
+                    // processMenu(if_config.menu);
+                    // processIsms(if_config.isms)
+                };
+
+                reader.readAsText(file);
+            }
+        }
+
+        function processOthr(other) {
+            const othrPropertyFunctions = [
+                processFunction1,
+                //processFunction2,
+                // ... 他の関数を追加
+                //processFunction33
+                ];
+
+            for (let i = 0; i < 1/*othrProperty.length*/; i++) {
+                const property = other[i];
+                const func = othrPropertyFunctions[i];
+
+                // 関数を呼び出し
+                const result = func(property);
+
+                // ここで結果を使って何かしらの処理を行う
+                //console.log(result);
+            }
+        }
+
+        function processFunction1(property) {
+            const result = [];
+            const binaryString = hexToBinary(property);
+
+            const bitDefinitions = [ // ビットの位置とプロパティの定義
+                { bit: 0, property: 'タイムテーブル(ONで有効)' },
+                { bit: 1, property: '店内BGMカット' },
+                { bit: 2, property: '事務所BGMカット' },
+                { bit: 3, property: '店内CMカット' },
+                { bit: 4, property: '事務所CMカット' },
+                { bit: 9, property: 'バックアップ(ONで有効)' },
+                { bit: 10, property: '店内ワンタッチ分指定カット' },
+                { bit: 11, property: '事務所ワンタッチ分指定カット' },
+                { bit: 12, property: 'インカムCMカット' },
+                { bit: 13, property: 'インカムワンタッチ分指定カット' },
+                { bit: 14, property: 'インカム音量(ON=インカム/OFF=ライン)' },
+                { bit: 15, property: 'ログファイル複製(ON=済/OFF=未)' }
+            ];
+
+            // 各ビット定義に対して処理を実行
+            bitDefinitions.forEach(({ bit, property }) => {
+                // ビットがセットされているかを確認し、結果を配列に追加
+                const isBitSet = checkBit(binaryString, bit);
+                result.push({ property, value: isBitSet ? 'ON' : 'OFF' });    
+            });
+
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '<p3>if_configのothrプロパティの1行目の設定</p>';
+            outputDiv.innerHTML += '<p4><b>案① ONの項目だけを表示</b></p>';
+            //案1: ONの項目だけを表示
+            result.forEach(entry => {
+                if (entry.value=='ON') {
+                    const p = document.createElement('p');
+                    p.textContent = entry.property;
+                    outputDiv.appendChild(p);
+                }
+            });
+            //案2: OFFも含めて全て表示
+            outputDiv.innerHTML += '<p4><b>案② OFFも含めて全て表示<b></p>';
+            result.forEach(entry => {
+                const p = document.createElement('p');
+                
+                p.textContent = `${entry.property}: ${entry.value}`;
+                outputDiv.appendChild(p);
+            });
+        }
+
+
+
+
+
+
+        // １６進数を２進数に変換するヘルパー関数
+        function hexToBinary(hexString) {
+        return (parseInt(hexString, 16).toString(2)).padStart(32, '0');
+        }
+
+        // 特定のビットがセットされているかを確認するヘルパー関数
+        function checkBit(binaryString, position) {
+        return binaryString.charAt(binaryString.length - 1 - position) === '1';
+        }
+    </script>
+</body>
+</html>
